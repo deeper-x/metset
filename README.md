@@ -9,10 +9,11 @@ Idea is to define a slice of variables template contains, then calling a checkUp
 
 Prototype:
 ```go
-// this will search for {{.var1}}, {{.var2}}, {{.var3}}
-varsToSearch := ["var1", "var2", "var3"]
+// given a basket of defined vars ({{.var1}}, {{.var2}}, {{.var3}}) 
+// we need to search for *all* of them inside template
+basketVar := ["var1", "var2", "var3"]
 
-if template.NotContains(varsToSearch){
+if template.NotContains(basketVar){
     // test fails
 }
 

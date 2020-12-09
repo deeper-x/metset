@@ -28,10 +28,21 @@ func (t Tmpl) Close() {
 	t.filePath.Close()
 }
 
-// Contains says if tmpl variable is found
-func (t Tmpl) Contains(i string) bool {
+// BasketVarIsMet for a given input slice, check for all vars
+func (t Tmpl) BasketVarIsMet(vars []string) bool {
+	for k := range vars {
+		if !t.VarIsMet(vars[k]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// VarIsMet says if tmpl's variable is found
+func (t Tmpl) VarIsMet(i string) bool {
 	// searching for {{ .var }} or {{.var}} or {{.var }} or {{ .var}}
-	pattern := fmt.Sprintf(`\{\{\ {0,1}\.%v\ {0,1}\}\}`, i)
+	pattern := fmt.Sprintf(`\{\{\s{0,1}\.%v\s{0,1}\}\}`, i)
 	scanner := bufio.NewScanner(t.filePath)
 
 	rxp, err := regexp.Compile(pattern)
@@ -44,6 +55,7 @@ func (t Tmpl) Contains(i string) bool {
 
 	for scanner.Scan() {
 		if rxp.MatchString(scanner.Text()) {
+			log.Println(scanner.Text(), "found")
 			return true
 		}
 	}
