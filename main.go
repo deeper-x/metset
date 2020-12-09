@@ -40,7 +40,7 @@ func (t Tmpl) VarIsMet(i string) bool {
 		return false
 	}
 
-	fbytes, err := ioutil.ReadFile("./assets/file.html")
+	fbytes, err := ioutil.ReadFile(t.filePath)
 	if err != nil {
 		log.Println(err)
 		return false
