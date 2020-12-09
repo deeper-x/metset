@@ -1,31 +1,21 @@
 package metset
 
 import (
-	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
-	"os"
 	"regexp"
+	"strings"
 )
 
 // Tmpl is the core object to inspect
 type Tmpl struct {
-	filePath *os.File
+	filePath string
 }
 
-// Open is the tmpl builder
-func Open(path string) Tmpl {
-	f, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-
-	return Tmpl{filePath: f}
-}
-
-// Close close the file handler
-func (t Tmpl) Close() {
-	t.filePath.Close()
+// New is the Tmpl builder
+func New(inPath string) Tmpl {
+	return Tmpl{filePath: inPath}
 }
 
 // BasketVarIsMet for a given input slice, check for all vars
@@ -43,7 +33,6 @@ func (t Tmpl) BasketVarIsMet(vars []string) bool {
 func (t Tmpl) VarIsMet(i string) bool {
 	// searching for {{ .var }} or {{.var}} or {{.var }} or {{ .var}}
 	pattern := fmt.Sprintf(`\{\{\s{0,1}\.%v\s{0,1}\}\}`, i)
-	scanner := bufio.NewScanner(t.filePath)
 
 	rxp, err := regexp.Compile(pattern)
 	if err != nil {
@@ -51,14 +40,20 @@ func (t Tmpl) VarIsMet(i string) bool {
 		return false
 	}
 
-	// scanner.Split(bufio.ScanWords)
+	fbytes, err := ioutil.ReadFile("./assets/file.html")
+	if err != nil {
+		log.Println(err)
+		return false
+	}
 
-	for scanner.Scan() {
-		if rxp.MatchString(scanner.Text()) {
-			log.Println(scanner.Text(), "found")
+	slice := strings.Split(string(fbytes), " ")
+
+	for v := range slice {
+		if rxp.MatchString(slice[v]) {
 			return true
 		}
 	}
 
+	// log.Println(i, "not found")
 	return false
 }
