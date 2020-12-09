@@ -14,3 +14,13 @@ Golang web application usually are made for template rendering: with this librar
 
     go get github.com/deeper-x/metset
 
+```go
+func TestContainsVar(t *testing.T) {
+	f := Open("./templates/index.html")
+	defer f.Close()
+
+	if !f.Contains("Var") {
+		t.Error("{{.Var}} not found, even if is an existent variable")
+	}
+}
+```
