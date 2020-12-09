@@ -16,7 +16,7 @@ Golang web application usually are made for template rendering: with this librar
 
 ```go
 func TestContainsVar(t *testing.T) {
-	f := Open("./templates/index.html")
+	f := metset.Open("./templates/index.html")
 	defer f.Close()
 
 	if !f.Contains("Var") {
