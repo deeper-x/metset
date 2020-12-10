@@ -1,0 +1,256 @@
+<!-- start page css-->
+<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+
+<link href="/plugins/sweetalerts/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+<link href="/plugins/sweetalerts/sweetalert.css" rel="stylesheet" type="text/css" />
+<!-- end page css-->
+
+{{ with .record }}
+<div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
+    <div class="widget widget-activity-three">
+        <div class="widget-heading">
+            <h5>Registrazione Staff</h5>
+        </div>
+        <div class="widget-content widget-content-area">
+
+            <form enctype="application/x-www-form-urlencoded" class="form_new_staff" id="form_new_staff" novalidate action="javascript:void(0);">
+                <div class="form-row mb-4 bar2 ">
+                    <div class="d-flex mr-bar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <h5 class="bar"> Inserimento dati</h5>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="surname">Cognome</label>
+                        <div class="invalid-surname" style="display: none;">
+                            Errore: cognome non valido
+                        </div>
+                        <input class="form-control" type="text" id="surname" name="surname" value="{{.Surname}}" />
+                        <input type="hidden" name="fk_organization" id="fk_organization" value="{{.Organization.ID}}" />
+                        <input type="hidden" name="ID" id="ID" value="{{.ID}}" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="name">Nome</label>
+                        <div class="invalid-name" style="display: none;">
+                            Errore: nome non valido
+                        </div>
+                        <input class="form-control" type="text" id="name" name="name" value="{{.Name}}" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="email">Email</label>
+                        <div class="invalid-email" style="display: none;">
+                            Errore: email non valida
+                        </div>
+                        <input class="form-control" type="text" id="email" name="email" value="{{.Email}}" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="fk_organization_role">Tipo:</label>
+                        <div class="invalid-fk_organization_role" style="display: none;">
+                            Errore: tipo errato
+                        </div>
+                        <select class="form-control" type="text" id="fk_organization_role" name="fk_organization_role">
+                            <option value="{{.FkOrganizationRoleID}}">Cambia</option>
+                            <option value="1">Medico</option>
+                            <option value="2">Segreteria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="signature">Firma</label>
+                        <div class="invalid-signature" style="display: none;">
+                            Errore: firma non valida
+                        </div>
+                        <input class="form-control" type="text" id="signature" name="signature" value="{{.Signature}}" />
+                    </div>
+                </div>
+
+                <div class="form-group mb-6 mt-4" align="right">
+                    <a class="btn btn-primary mt-4" id="reset_passwd">Reset password</a>
+                    <button class="btn btn-primary mt-4" type="submit" id="create_button">Aggiorna</button>
+                </div>
+        </div>
+        </form>
+
+    </div>
+</div>
+
+
+<!-- page scripts -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/plugins/sweetalerts/sweetalert2.min.js"></script>
+<script src="/assets/js/scrollspyNav.js"></script>
+<script src="/plugins/input-mask/jquery.inputmask.bundle.min.js"></script>
+<script src="/plugins/bootstrap-maxlength/bootstrap-maxlength.js"></script>
+
+<script>
+    $("#reset_passwd").on("click", () => {
+        swal({
+            title: 'Reset password',
+            text: "Inviare il messaggio?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Invia',
+            padding: '2em'
+        }).then(
+            (result) => {
+                if (result.value) {
+                    axios.get("/o_staff_reset_passwd/{{.ID}}").then(
+                        () => {
+                            swal("Password resettata!");
+                        }
+                    );
+                }
+            }
+        )
+    });
+
+    $("#name").on("focus keyup", function(event) {
+        event.preventDefault();
+        if ($(this).inputmask("isComplete")) {
+            $(".invalid-name").css("display", "none");
+        }
+    });
+    $("#surname").on("focus keyup", function(event) {
+        event.preventDefault();
+        if ($(this).inputmask("isComplete")) {
+            $(".invalid-surname").css("display", "none");
+        }
+    });
+
+    //EMAIL MANAGEMENT
+    $("#email").inputmask({
+        mask: "*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]",
+        greedy: !1,
+        onBeforePaste: function(m, a) {
+            return (m = m.toLowerCase()).replace("mailto:", "")
+        },
+        definitions: {
+            "*": {
+                validator: "[0-9A-Za-z\.]",
+                cardinality: 1,
+                casing: "lower"
+            }
+        }
+    });
+
+    $("#email").on("focus keyup", function(event) {
+        event.preventDefault();
+        if ($(this).inputmask("isComplete")) {
+            $(".invalid-email").css("display", "none");
+        }
+    });
+
+    function PleaseDoubleCheckAlert(cfLength) {
+        swal({
+            type: "error",
+            title: "Errore",
+            text: "Verififcare i campi e riprovare.",
+            padding: "2em"
+        })
+    }
+
+    // onload management
+    window.addEventListener("load", () => {
+
+        function createStaff() {
+            const ID = document.getElementById("ID").value;
+            const name = document.getElementById("name").value;
+            const surname = document.getElementById("surname").value;
+            const email = document.getElementById("email").value;
+            const fkOrganizationRole = document.getElementById("fk_organization_role").value;
+            const signature = document.getElementById("signature").value;
+            const fkOrganization = document.getElementById("fk_organization").value;
+
+            let formData = new FormData();
+
+            formData.append("ID", ID);
+            formData.append("name", name);
+            formData.append("surname", surname);
+            formData.append("email", email);
+            formData.append("fk_organization_role", fkOrganizationRole);
+            formData.append("signature", signature);
+            formData.append("fk_organization", fkOrganization);
+
+            console.log("about to save ", formData.forEach((k, v) => {
+                console.log(k, v)
+            }));
+
+            axios.post("/o_update_staff", formData, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                }
+            }).then(
+                () => {
+                    swal({
+                        title: "Staff aggiornato",
+                        type: "success",
+                        padding: "2em",
+                    }).then(
+                        () => {
+                            window.location.href = `/o_all_org_staff`;
+                        }
+                    )
+                }
+            )
+        } // end function
+
+        var forms = document.getElementsByClassName("form_new_staff");
+        // var invalid = $(".form_new_patient .invalid-feedback");
+
+        var validation = Array.prototype.filter.call(forms, (form) => {
+
+            form.addEventListener("submit", (e) => {
+                // PREFLIGHT CHECKS:
+
+                // 1. data is inserted
+                let emailOK = $("#email").val().length == 0 ? false : true;
+                let nameOK = $("#name").val().length == 0 ? false : true;
+                let surnameOK = $("#name").val().length == 0 ? false : true;
+
+                if (form.checkValidity() === false || !emailOK || !nameOK || !surnameOK) {
+                    // do nothing on data
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (!emailOK) {
+                        $(".invalid-email").css("display", "block");
+                    }
+
+                    if (!nameOK) {
+                        $(".invalid-email").css("display", "block");
+                    }
+
+                    if (!surnameOK) {
+                        $(".invalid-email").css("display", "block");
+                    }
+
+                    // show alert
+                    PleaseDoubleCheckAlert();
+
+                } else {
+                    createStaff();
+                    // invalid.css("display", "none");
+                    // form.classList.add("was-validated");
+
+                }
+            }, false)
+        })
+    }, false)
+</script>
+
+{{ end }}
+
+<!-- end page scripts -->

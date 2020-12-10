@@ -30,12 +30,12 @@ if template.NotContains(basketVar){
     go get github.com/deeper-x/metset
 
 ```go
-func TestContainsVar(t *testing.T) {
-	f := metset.Open("./templates/index.html")
-	defer f.Close()
-
-	if !f.Contains("Var") {
-		t.Error("{{.Var}} not found, even if is an existent variable")
+func TestTemplate(t *testing.T) {
+	basket := []string{"Surname", "ID", "Name", "Email", "Signature", "Organization.ID"}
+	
+	f := New("./assets/template.html")
+	if !f.BasketVarIsMet(basket) {
+		t.Error("template vars basket not found")
 	}
 }
 ```

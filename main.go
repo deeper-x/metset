@@ -31,8 +31,9 @@ func (t Tmpl) BasketVarIsMet(vars []string) bool {
 
 // VarIsMet says if tmpl's variable is found
 func (t Tmpl) VarIsMet(i string) bool {
+	// \{\{ {0,1}\.%v\ \}\}
 	// searching for {{ .var }} or {{.var}} or {{.var }} or {{ .var}}
-	pattern := fmt.Sprintf(`\{\{\s{0,1}\.%v\s{0,1}\}\}`, i)
+	pattern := fmt.Sprintf(`\{\{\.%v\}\}`, i)
 
 	rxp, err := regexp.Compile(pattern)
 	if err != nil {
@@ -54,6 +55,6 @@ func (t Tmpl) VarIsMet(i string) bool {
 		}
 	}
 
-	// log.Println(i, "not found")
+	log.Printf("Debug: %v, not found", i)
 	return false
 }

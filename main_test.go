@@ -36,6 +36,15 @@ func TestContainsSed(t *testing.T) {
 	}
 }
 
+func TestTemplate(t *testing.T) {
+	basket := []string{"Surname", "ID", "Name", "Email", "FkOrganizationRoleID", "Signature", "Organization.ID"}
+
+	f := New("./assets/template.html")
+	if !f.BasketVarIsMet(basket) {
+		t.Error("template vars basket not found")
+	}
+}
+
 func TestNotContains(t *testing.T) {
 	f := New("./assets/file.html")
 
